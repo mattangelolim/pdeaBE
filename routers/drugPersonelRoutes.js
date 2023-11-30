@@ -39,10 +39,9 @@ router.post("/register/drug-personality", verifyToken, async (req, res) => {
         const drugPersonality = await DrugPerson.findOne({
             where: { 
                 Name: Name,
-                Birthdate: Birthdate
+                Birthdate:Birthdate
              },
         });
-        console.log("tesT", drugPersonality)
         // If the drug personality doesn't exist, create a new one
         if (!drugPersonality) {
            const DrugPersonnel =  await DrugPerson.create({

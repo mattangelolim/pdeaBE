@@ -21,7 +21,7 @@ const Drug_Personality = sequelize.define("Drug_Personality", {
     allowNull: false,
   },
   Birthdate: {
-    type: DataTypes.DATE,
+    type: DataTypes.STRING,
     allowNull: true,
   },
   Address: {
