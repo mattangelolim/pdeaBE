@@ -79,7 +79,7 @@ router.post("/register/drug-personality", verifyToken, async (req, res) => {
           Birthdate: Birthdate
         },
       });
-      console.log("tesT", drugPersonality)
+      // console.log("tesT", drugPersonality)
       // If the drug personality doesn't exist, create a new one
       if (!drugPersonality) {
         const DrugPersonnel = await DrugPerson.create({

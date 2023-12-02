@@ -55,6 +55,42 @@ router.post("/create/affiliation", upload.single("file"), async (req, res) => {
   }
 });
 
+router.post("/update/affiliation", upload.single("file"), async (req, res) => {
+  try {
+      const id = req.query.id;
+      const UID = req.query.UID;
+      const { Name, Gender, Relationship } = req.body;
+
+      const findAffiliation = await Affiliation.findOne({
+          where: {
+              id: id,
+              UID: UID,
+          },
+      });
+
+      if (!findAffiliation) {
+          return res.status(404).json({ message: "Affiliation not found" });
+      }
+
+      // Update the fields
+      findAffiliation.Name = Name || findAffiliation.Name;
+      findAffiliation.Gender = Gender || findAffiliation.Gender;
+      findAffiliation.Relationship = Relationship || findAffiliation.Relationship;
+
+      // Check if a new file is provided
+      if (req.file) {
+          findAffiliation.Picture = req.file.path;
+      }
+
+      await findAffiliation.save();
+
+      res.status(200).json({ message: "Affiliation updated successfully", findAffiliation });
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: error.message });
+  }
+});
+
 router.get("/fetch/affiliations", async (req, res) => {
   try {
     const UID = req.query.UID;
@@ -74,6 +110,7 @@ router.get("/fetch/affiliations", async (req, res) => {
     // Transform the affiliations to include the picture data
     const affiliationsWithPictures = affiliations.map((affiliation) => {
       return {
+        id: affiliation.id,
         Affiliation_id: affiliation.Affiliation_id,
         Name: affiliation.Name,
         Gender: affiliation.Gender,
