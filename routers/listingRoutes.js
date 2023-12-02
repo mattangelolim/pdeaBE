@@ -20,7 +20,7 @@ router.get("/personality/list", verifyToken, async (req, res) => {
       console.log(birthdate)
       const now = new Date();
       console.log(now)
-      let age = now.getFullYear() - birthdate.getFulYear(l);
+      let age = now.getYear() - birthdate.getYear();
       // age = Math.floor(age);
 
       if (
@@ -48,21 +48,23 @@ router.get("/personality/list", verifyToken, async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 });
+
 router.get("/personality/list/try", async (req, res) => {
   try {
-    // Assuming adminChecker is a district in the req.user object
-
 
     // Fetch drug personalities where district is equal to adminChecker
-    const drugPersonalities = await DrugPerson.findAll();
+    const drugPersonalities = await DrugPerson.findAll({
+      where:{
+        district: "district 1"
+      }
+    });
+    // console.log(drugPersonalities)
 
     // Calculate age for each object based on birthdate
     const drugPersonalitiesWithAge = drugPersonalities.map(person => {
       const birthdate = new Date(person.Birthdate);
-      console.log(birthdate)
       const now = new Date();
-      console.log(now)
-      let age = now.getFullYear() - birthdate.getFulYear(l);
+      let age = now.getYear() - birthdate.getYear();
       // age = Math.floor(age);
 
       if (
@@ -84,7 +86,7 @@ router.get("/personality/list/try", async (req, res) => {
     // Send the list with age as a response
     res.json(drugPersonalitiesWithAge);
 
-    emitPersonalityListUpdate(drugPersonalitiesWithAge);
+    // emitPersonalityListUpdate(drugPersonalitiesWithAge);
   } catch (error) {
     console.error(error);
     res.status(500).send("Internal Server Error");
