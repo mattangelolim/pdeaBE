@@ -7,7 +7,7 @@ const {
   generateAffiliationID,
   generateVehicleID,
   generateBankID,
-  generateRandomString
+  generateRandomString,
 } = require("../utils/generatedIDS");
 
 // Set up multer storage to store files in a folder
@@ -17,8 +17,8 @@ const storage = multer.diskStorage({
   },
   filename: function (req, file, cb) {
     const uniqueFileName = generateRandomString(); // Generate a unique filename
-    const fileExtension = file.mimetype.split('/')[1];
-    cb(null, uniqueFileName + "_" + Date.now() + '.jpg'); // Append a timestamp to the filename
+    const fileExtension = file.mimetype.split("/")[1];
+    cb(null, uniqueFileName + "_" + Date.now() + ".jpg"); // Append a timestamp to the filename
   },
 });
 
@@ -44,7 +44,12 @@ router.post("/upload-picture", upload.single("picture"), async (req, res) => {
     user.Picture = req.file.path;
     await user.save();
 
-    res.status(200).json({ message: "Picture uploaded successfully.", imagePath: user.Picture });
+    res
+      .status(200)
+      .json({
+        message: "Picture uploaded successfully.",
+        imagePath: user.Picture,
+      });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: error.message });
@@ -56,16 +61,13 @@ router.post("/register/drug-personality", verifyToken, async (req, res) => {
     const adminChecker = req.user;
 
     const UID = generateRandomString();
-    console.log(UID)
+    console.log(UID);
 
-    if (adminChecker.user_type === "superadmin" || adminChecker.user_type === "admin") {
-      const {
-        Name,
-        Birthdate,
-        Address,
-        Gender,
-        Civil_Status,
-      } = req.body;
+    if (
+      adminChecker.user_type === "superadmin" ||
+      adminChecker.user_type === "admin"
+    ) {
+      const { Name, Birthdate, Address, Gender, Civil_Status } = req.body;
 
       // FUNCTIONS TO GENERATE DIFFERENT IDS
       const Affiliation_id = generateAffiliationID(Name);
@@ -76,7 +78,7 @@ router.post("/register/drug-personality", verifyToken, async (req, res) => {
       const drugPersonality = await DrugPerson.findOne({
         where: {
           Name: Name,
-          Birthdate: Birthdate
+          Birthdate: Birthdate,
         },
       });
       // console.log("tesT", drugPersonality)
@@ -94,36 +96,45 @@ router.post("/register/drug-personality", verifyToken, async (req, res) => {
           Vehicle_id,
           Bank_id,
         });
-        res.status(201).json({ message: "Drug personality created successfully.", DrugPersonnel });
+        res
+          .status(201)
+          .json({
+            message: "Drug personality created successfully.",
+            DrugPersonnel,
+          });
       } else {
-        res.status(400).json({ message: "Drug Personality already exist" })
+        res.status(400).json({ message: "Drug Personality already exist" });
       }
     } else {
-      res.status(403).json({ error: "Permission denied. Only superadmins or admins can register drug personalities." });
+      res
+        .status(403)
+        .json({
+          error:
+            "Permission denied. Only superadmins or admins can register drug personalities.",
+        });
     }
   } catch (error) {
-    console.error(error)
-    res.status(500).json({ message: error.message })
+    console.error(error);
+    res.status(500).json({ message: error.message });
   }
 });
 
 router.post("/update/drug-personality", verifyToken, async (req, res) => {
   try {
     const adminChecker = req.user;
-    const UID = req.query.UID
+    const UID = req.query.UID;
 
-    if (adminChecker.user_type === "superadmin" || adminChecker.user_type === "admin") {
-      const {
-        Name,
-        Birthdate,
-        Address,
-        Gender,
-        Civil_Status,
-      } = req.body;
+    if (
+      adminChecker.user_type === "superadmin" ||
+      adminChecker.user_type === "admin"
+    ) {
+      const { Name, Birthdate, Address, Gender, Civil_Status } = req.body;
 
       // Check if the UID is provided in the request body
       if (!UID) {
-        return res.status(400).json({ error: "UID is required for updating drug personality." });
+        return res
+          .status(400)
+          .json({ error: "UID is required for updating drug personality." });
       }
 
       // Find the drug personality by UID
@@ -146,9 +157,57 @@ router.post("/update/drug-personality", verifyToken, async (req, res) => {
       // Save the updated drug personality
       await drugPersonality.save();
 
-      res.status(200).json({ message: "Drug personality updated successfully.", drugPersonality });
+      res
+        .status(200)
+        .json({
+          message: "Drug personality updated successfully.",
+          drugPersonality,
+        });
     } else {
-      res.status(403).json({ error: "Permission denied. Only superadmins or admins can update drug personalities." });
+      res
+        .status(403)
+        .json({
+          error:
+            "Permission denied. Only superadmins or admins can update drug personalities.",
+        });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
+router.post("/delete/drug-personality", verifyToken, async (req, res) => {
+  try {
+    const adminChecker = req.user;
+
+    if (
+      adminChecker.user_type === "superadmin" ||
+      adminChecker.user_type === "admin"
+    ) {
+      const UID = req.query.UID;
+
+      // Find the drug personality by UID
+      const drugPersonality = await DrugPerson.findOne({
+        where: { UID: UID, district: adminChecker.district },
+      });
+
+      // If the drug personality exists, delete it
+      if (drugPersonality) {
+        await drugPersonality.destroy();
+        res
+          .status(200)
+          .json({ message: "Drug personality deleted successfully." });
+      } else {
+        res.status(404).json({ message: "Drug Personality not found" });
+      }
+    } else {
+      res
+        .status(403)
+        .json({
+          error:
+            "Permission denied. Only superadmins or admins can delete drug personalities.",
+        });
     }
   } catch (error) {
     console.error(error);
