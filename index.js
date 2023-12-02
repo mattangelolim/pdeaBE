@@ -13,6 +13,7 @@ const server = http.createServer(app); // Create an HTTP server instance
 const adminRoutes = require("./routers/adminRoutes");
 const drugPersonalitiesRoutes = require("./routers/drugPersonelRoutes");
 const listingRoutes = require("./routers/listingRoutes")
+const affiliationRoutes = require ("./routers/affialitionRoutes")
 
 // Middleware
 app.use(bodyParser.json());
@@ -24,6 +25,7 @@ app.use(morgan("dev"));
 app.use("/api", adminRoutes);
 app.use("/api", drugPersonalitiesRoutes);
 app.use("/api", listingRoutes)
+app.use("/api", affiliationRoutes)
 
 // Routes
 app.get("/", (req, res) => {
