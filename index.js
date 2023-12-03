@@ -48,7 +48,7 @@ app.use((req, res, next) => {
 });
 
 app.get("/.well-known/pki-validation/CF47C1F683821DB722C79C6856A107E9.txt", (req,res) =>{
-  res.sendFile('home/ubuntu/pdeaBE/CF47C1F683821DB722C79C6856A107E9.txt')
+  res.sendFile('/home/ubuntu/pdeaBE/CF47C1F683821DB722C79C6856A107E9.txt')
 })
 
 // Start the server
