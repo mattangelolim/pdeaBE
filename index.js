@@ -8,15 +8,22 @@ const helmet = require("helmet");
 const morgan = require("morgan");
 const { initializeWebSocket } = require("./socket");
 
-const file = fs.readFileSync("./CF47C1F683821DB722C79C6856A107E9.txt")
-// console.log(file)
+// const file = fs.readFileSync("./CF47C1F683821DB722C79C6856A107E9.txt")
+const key = fs.readFileSync("private.key");
+const cert = fs.readFileSync("certificate.crt");
+
+
+const cred = {
+  key,
+  cert
+}
 
 const app = express();
 
 app.use("/uploads", express.static("./uploads"))
 
 const port = process.env.PORT || 3000;
-const server = http.createServer(app); // Create an HTTP server instance
+const server = https.createServer(cred, app); // Create an HTTP server instance
 
 const adminRoutes = require("./routers/adminRoutes");
 const drugPersonalitiesRoutes = require("./routers/drugPersonelRoutes");
@@ -51,8 +58,6 @@ app.use((req, res, next) => {
   req.io = io; // Assuming io is a global variable in your application
   next();
 });
-
-
 
 // Start the server
 server.listen(port, () => {
