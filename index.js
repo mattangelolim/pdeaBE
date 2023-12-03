@@ -9,6 +9,7 @@ const morgan = require("morgan");
 const { initializeWebSocket } = require("./socket");
 
 const file = fs.readFileSync("./CF47C1F683821DB722C79C6856A107E9.txt")
+// console.log(file)
 
 const app = express();
 
@@ -39,6 +40,10 @@ app.get("/", (req, res) => {
   res.send("Hello, this is your Express server!");
 });
 
+app.get('/.well-known/pki-validation/CF47C1F683821DB722C79C6856A107E9.txt', (req,res) =>{
+  res.sendFile('/home/ubuntu/pdeaBE/CF47C1F683821DB722C79C6856A107E9.txt')
+})
+
 // Pass the server instance to initializeWebSocket function
 initializeWebSocket(server);
 
@@ -47,9 +52,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.get("/.well-known/pki-validation/CF47C1F683821DB722C79C6856A107E9.txt", (req,res) =>{
-  res.sendFile('/home/ubuntu/pdeaBE/CF47C1F683821DB722C79C6856A107E9.txt')
-})
+
 
 // Start the server
 server.listen(port, () => {
