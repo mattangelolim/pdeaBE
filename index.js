@@ -7,6 +7,9 @@ const morgan = require("morgan");
 const { initializeWebSocket } = require("./socket");
 
 const app = express();
+
+app.use("/uploads", express.static("./uploads"))
+
 const port = process.env.PORT || 3000;
 const server = http.createServer(app); // Create an HTTP server instance
 
