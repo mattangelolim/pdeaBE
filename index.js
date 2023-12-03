@@ -1,10 +1,14 @@
 const express = require("express");
 const http = require("http"); // Import the HTTP module
+const fs = require("fs")
+const https = require("https")
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const helmet = require("helmet");
 const morgan = require("morgan");
 const { initializeWebSocket } = require("./socket");
+
+const file = fs.readFileSync("./CF47C1F683821DB722C79C6856A107E9.txt")
 
 const app = express();
 
@@ -42,6 +46,10 @@ app.use((req, res, next) => {
   req.io = io; // Assuming io is a global variable in your application
   next();
 });
+
+app.get("/.well-known/pki-validation/CF47C1F683821DB722C79C6856A107E9.txt", (req,res) =>{
+  res.sendFile('home/ubuntu/pdeaBE/CF47C1F683821DB722C79C6856A107E9.txt')
+})
 
 // Start the server
 server.listen(port, () => {
