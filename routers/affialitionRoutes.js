@@ -10,7 +10,8 @@ const storage = multer.diskStorage({
       cb(null, "uploads/affiliates"); // Set the destination folder for uploaded images
     },
     filename: function (req, file, cb) {
-      cb(null, "_" + Date.now() + '.jpg'); // Append a timestamp to the filename
+      const uniqueFileName = generateRandomString();
+      cb(null, uniqueFileName + "_" + Date.now() + ".jpg");
     },
   });
   

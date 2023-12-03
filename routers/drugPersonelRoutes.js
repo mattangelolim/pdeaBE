@@ -13,7 +13,7 @@ const {
 // Set up multer storage to store files in a folder
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "uploads/"); // Set the destination folder for uploaded images
+    cb(null, "uploads/profiles/"); // Set the destination folder for uploaded images
   },
   filename: function (req, file, cb) {
     const uniqueFileName = generateRandomString(); // Generate a unique filename
@@ -67,7 +67,7 @@ router.post("/register/drug-personality", verifyToken, async (req, res) => {
       adminChecker.user_type === "superadmin" ||
       adminChecker.user_type === "admin"
     ) {
-      const { Name, Birthdate, Address, Gender, Civil_Status } = req.body;
+      const { Name, Birthdate, Address, Gender, Civil_Status, Nationality, Classification, Classification_Rating } = req.body;
 
       // FUNCTIONS TO GENERATE DIFFERENT IDS
       const Affiliation_id = generateAffiliationID(Name);
@@ -92,6 +92,9 @@ router.post("/register/drug-personality", verifyToken, async (req, res) => {
           Address,
           Gender,
           Civil_Status,
+          Nationality,
+          Classification,
+          Classification_Rating,
           Affiliation_id,
           Vehicle_id,
           Bank_id,
@@ -128,7 +131,7 @@ router.post("/update/drug-personality", verifyToken, async (req, res) => {
       adminChecker.user_type === "superadmin" ||
       adminChecker.user_type === "admin"
     ) {
-      const { Name, Birthdate, Address, Gender, Civil_Status } = req.body;
+      const { Name, Birthdate, Address, Gender, Civil_Status, Nationality, Classification, Classification_Rating } = req.body;
 
       // Check if the UID is provided in the request body
       if (!UID) {
@@ -153,6 +156,9 @@ router.post("/update/drug-personality", verifyToken, async (req, res) => {
       if (Address) drugPersonality.Address = Address;
       if (Gender) drugPersonality.Gender = Gender;
       if (Civil_Status) drugPersonality.Civil_Status = Civil_Status;
+      if (Nationality) drugPersonality.Nationality = Nationality;
+      if (Classification) drugPersonality.Classification = Classification;
+      if (Classification_Rating) drugPersonality.Classification_Rating = Classification_Rating;
 
       // Save the updated drug personality
       await drugPersonality.save();
@@ -178,6 +184,7 @@ router.post("/update/drug-personality", verifyToken, async (req, res) => {
 });
 
 router.post("/delete/drug-personality", verifyToken, async (req, res) => {
+
   try {
     const adminChecker = req.user;
 

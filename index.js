@@ -23,7 +23,8 @@ const app = express();
 app.use("/uploads", express.static("./uploads"))
 
 const port = process.env.PORT || 3000;
-const server = https.createServer(cred, app); // Create an HTTP server instance
+const httpServer = http.createServer(app);
+const httpsServer = https.createServer(cred, app); // Create an HTTP server instance
 
 const adminRoutes = require("./routers/adminRoutes");
 const drugPersonalitiesRoutes = require("./routers/drugPersonelRoutes");
@@ -52,14 +53,19 @@ app.get('/.well-known/pki-validation/CF47C1F683821DB722C79C6856A107E9.txt', (req
 })
 
 // Pass the server instance to initializeWebSocket function
-initializeWebSocket(server);
+initializeWebSocket(httpsServer);
 
 app.use((req, res, next) => {
-  req.io = io; // Assuming io is a global variable in your application
+  req.io = io; 
   next();
 });
 
 // Start the server
-server.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
+httpServer.listen(port, () => {
+  console.log(`HTTP server is running on http://localhost:${port}`);
 });
+
+httpsServer.listen(process.env.HTTPSPORT, () =>{
+  console.log(`HTTP server is running on ${process.env.HTTPSPORT}`)
+})
+

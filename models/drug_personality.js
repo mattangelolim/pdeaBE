@@ -32,9 +32,21 @@ const Drug_Personality = sequelize.define("Drug_Personality", {
     type: DataTypes.STRING,
     allowNull: true,
   },
+  Nationality:{
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
   Civil_Status: {
     type: DataTypes.STRING,
     allowNull: true,
+  },
+  Classification:{
+    type: DataTypes.STRING,
+    allowNull:true,
+  },
+  Classification_Rating:{
+    type:DataTypes.INTEGER,
+    allowNull:true
   },
   Picture: {
     type: DataTypes.STRING,
@@ -54,6 +66,6 @@ const Drug_Personality = sequelize.define("Drug_Personality", {
   },
 });
 
-// Drug_Personality.sync();
+Drug_Personality.sync();
 
 module.exports = Drug_Personality;
