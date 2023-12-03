@@ -66,6 +66,6 @@ httpServer.listen(port, () => {
 });
 
 httpsServer.listen(process.env.HTTPSPORT, () =>{
-  console.log(`HTTP server is running on ${process.env.HTTPSPORT}`)
+  console.log(`HTTPS server is running on ${process.env.HTTPSPORT}`)
 })
 
