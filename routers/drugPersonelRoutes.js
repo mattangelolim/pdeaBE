@@ -17,7 +17,6 @@ const storage = multer.diskStorage({
   },
   filename: function (req, file, cb) {
     const uniqueFileName = generateRandomString(); // Generate a unique filename
-    const fileExtension = file.mimetype.split("/")[1];
     cb(null, uniqueFileName + "_" + Date.now() + ".jpg"); // Append a timestamp to the filename
   },
 });
@@ -81,7 +80,7 @@ router.post("/register/drug-personality", verifyToken, async (req, res) => {
           Birthdate: Birthdate,
         },
       });
-      // console.log("tesT", drugPersonality)
+
       // If the drug personality doesn't exist, create a new one
       if (!drugPersonality) {
         const DrugPersonnel = await DrugPerson.create({
