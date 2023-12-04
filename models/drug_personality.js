@@ -86,6 +86,6 @@ const Drug_Personality = sequelize.define("Drug_Personality", {
   },
 });
 
-Drug_Personality.sync();
+// Drug_Personality.sync();
 
 module.exports = Drug_Personality;
