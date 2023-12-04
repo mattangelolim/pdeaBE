@@ -57,10 +57,10 @@ app.get("/", (req, res) => {
 // Pass the server instance to initializeWebSocket function
 initializeWebSocket(httpsServer);
 
-app.use((req, res, next) => {
-  req.io = io;
-  next();
-});
+// app.use((req, res, next) => {
+//   req.io = io;
+//   next();
+// });
 
 // Start the server
 httpServer.listen(port, () => {

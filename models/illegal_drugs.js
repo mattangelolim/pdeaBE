@@ -17,7 +17,6 @@ const Illegal_Drugs = sequelize.define('Illegal_Drugs', {
     }
 })
 
-Illegal_Drugs.sync()
-
+// Illegal_Drugs.sync()
 
 module.exports = Illegal_Drugs;

@@ -25,6 +25,7 @@ const Operation = sequelize.define('Operation', {
     allowNull: false,
   },
 });
+
 // Operation.sync()
 
 module.exports = Operation;

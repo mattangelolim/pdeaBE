@@ -1,9 +1,10 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const Illegal_Drugs = require('../models/illegal_drugs');
+const Illegal_Drugs = require("../models/illegal_drugs");
+const verifyToken = require("../middleware/tokenMiddleware");
 
 // Route to add data about illegal drug products
-router.post('/add/illegal-drugs', async (req, res) => {
+router.post("/add/illegal-drugs", verifyToken, async (req, res) => {
   try {
     // Extract the data from the request body
     const { drug_name } = req.body;
