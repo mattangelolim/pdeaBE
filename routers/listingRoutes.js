@@ -12,6 +12,7 @@ router.get("/personality/list", verifyToken, async (req, res) => {
     // Fetch drug personalities where district is equal to adminChecker
     const drugPersonalities = await DrugPerson.findAll({
       where: { district: adminDistrict },
+      order: [['Classification_Rating', 'DESC']],
     });
 
     // Calculate age for each object based on birthdate

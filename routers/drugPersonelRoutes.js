@@ -67,7 +67,7 @@ router.post("/register/drug-personality", verifyToken, async (req, res) => {
       adminChecker.user_type === "superadmin" ||
       adminChecker.user_type === "admin"
     ) {
-      const { Name, Birthdate, Address, Gender, Civil_Status, Nationality, Classification, Classification_Rating } = req.body;
+      const { Name, Birthdate, Address, Barangay, City, Region, Gender, Civil_Status, Nationality, Classification, Classification_Rating } = req.body;
 
       // FUNCTIONS TO GENERATE DIFFERENT IDS
       const Affiliation_id = generateAffiliationID(Name);
@@ -90,6 +90,9 @@ router.post("/register/drug-personality", verifyToken, async (req, res) => {
           Name,
           Birthdate,
           Address,
+          Barangay,
+          City,
+          Region,
           Gender,
           Civil_Status,
           Nationality,
@@ -131,7 +134,7 @@ router.post("/update/drug-personality", verifyToken, async (req, res) => {
       adminChecker.user_type === "superadmin" ||
       adminChecker.user_type === "admin"
     ) {
-      const { Name, Birthdate, Address, Gender, Civil_Status, Nationality, Classification, Classification_Rating } = req.body;
+      const { Name, Birthdate, Address, Barangay, City, Region, Gender, Civil_Status, Nationality, Classification, Classification_Rating } = req.body;
 
       // Check if the UID is provided in the request body
       if (!UID) {
@@ -154,7 +157,10 @@ router.post("/update/drug-personality", verifyToken, async (req, res) => {
       if (Name) drugPersonality.Name = Name;
       if (Birthdate) drugPersonality.Birthdate = Birthdate;
       if (Address) drugPersonality.Address = Address;
-      if (Gender) drugPersonality.Gender = Gender;
+      if (Barangay) drugPersonality.Barangay = Barangay;
+      if (City) drugPersonality.City = City;
+      if (Address) drugPersonality.Address = Address;
+      if (Region) drugPersonality.Region = Region;
       if (Civil_Status) drugPersonality.Civil_Status = Civil_Status;
       if (Nationality) drugPersonality.Nationality = Nationality;
       if (Classification) drugPersonality.Classification = Classification;
