@@ -1,7 +1,7 @@
 // models/Vehicle_Record.js
 
 const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database'); // Assuming you have a separate file for Sequelize configuration
+const sequelize = require('../config/database'); 
 
 const Vehicle_Record = sequelize.define('Vehicle_Record', {
   id: {

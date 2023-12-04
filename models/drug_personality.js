@@ -16,7 +16,15 @@ const Drug_Personality = sequelize.define("Drug_Personality", {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  Name: {
+  First_Name: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  Middle_Name: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  Last_Name: {
     type: DataTypes.STRING,
     allowNull: false,
   },
@@ -25,6 +33,18 @@ const Drug_Personality = sequelize.define("Drug_Personality", {
     allowNull: true,
   },
   Address: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  Barangay: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  City: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  Region: {
     type: DataTypes.STRING,
     allowNull: true,
   },

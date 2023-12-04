@@ -29,7 +29,8 @@ const httpsServer = https.createServer(cred, app); // Create an HTTP server inst
 const adminRoutes = require("./routers/adminRoutes");
 const drugPersonalitiesRoutes = require("./routers/drugPersonelRoutes");
 const listingRoutes = require("./routers/listingRoutes")
-const affiliationRoutes = require ("./routers/affialitionRoutes")
+const affiliationRoutes = require("./routers/affialitionRoutes")
+const vehicleRecordRoutes = require("./routers/vehicleRecordRoutes")
 
 // Middleware
 app.use(bodyParser.json());
@@ -42,21 +43,22 @@ app.use("/api", adminRoutes);
 app.use("/api", drugPersonalitiesRoutes);
 app.use("/api", listingRoutes)
 app.use("/api", affiliationRoutes)
+app.use("/api", vehicleRecordRoutes)
 
 // Routes
 app.get("/", (req, res) => {
   res.send("Hello, this is your Express server!");
 });
 
-app.get('/.well-known/pki-validation/CF47C1F683821DB722C79C6856A107E9.txt', (req,res) =>{
-  res.sendFile('/home/ubuntu/pdeaBE/CF47C1F683821DB722C79C6856A107E9.txt')
-})
+// app.get('/.well-known/pki-validation/CF47C1F683821DB722C79C6856A107E9.txt', (req, res) => {
+//   res.sendFile('/home/ubuntu/pdeaBE/CF47C1F683821DB722C79C6856A107E9.txt')
+// })
 
 // Pass the server instance to initializeWebSocket function
 initializeWebSocket(httpsServer);
 
 app.use((req, res, next) => {
-  req.io = io; 
+  req.io = io;
   next();
 });
 
@@ -65,7 +67,7 @@ httpServer.listen(port, () => {
   console.log(`HTTP server is running on http://localhost:${port}`);
 });
 
-httpsServer.listen(process.env.HTTPSPORT, () =>{
+httpsServer.listen(process.env.HTTPSPORT, () => {
   console.log(`HTTPS server is running on ${process.env.HTTPSPORT}`)
 })
 
