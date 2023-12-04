@@ -25,7 +25,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 // Endpoint to upload a picture
-router.post("/upload-picture", upload.single("picture"), async (req, res) => {
+router.post("/upload-picture", upload.single("file"), async (req, res) => {
   try {
     const uid = req.query.uid;
 
@@ -41,7 +41,7 @@ router.post("/upload-picture", upload.single("picture"), async (req, res) => {
     }
 
     // Update the user's profile with the uploaded picture path
-    user.Picture = req.file.path;
+    user.file = req.file.path;
     await user.save();
 
     res
@@ -56,7 +56,7 @@ router.post("/upload-picture", upload.single("picture"), async (req, res) => {
   }
 });
 
-router.post("/register/drug-personality", verifyToken, async (req, res) => {
+router.post("/register/drug-personality", upload.single("file"), verifyToken, async (req, res) => {
   try {
     const adminChecker = req.user;
 
@@ -67,17 +67,20 @@ router.post("/register/drug-personality", verifyToken, async (req, res) => {
       adminChecker.user_type === "superadmin" ||
       adminChecker.user_type === "admin"
     ) {
-      const { Name, Birthdate, Address, Barangay, City, Region, Gender, Civil_Status, Nationality, Classification, Classification_Rating } = req.body;
+      const { First_Name, Middle_Name, Last_Name, Birthdate, Address, Barangay, City, Region, Gender, Civil_Status, Nationality, Classification, Classification_Rating } = req.body;
 
       // FUNCTIONS TO GENERATE DIFFERENT IDS
-      const Affiliation_id = generateAffiliationID(Name);
-      const Vehicle_id = generateVehicleID(Name);
-      const Bank_id = generateBankID(Name);
+      const Affiliation_id = generateAffiliationID(UID);
+      const Vehicle_id = generateVehicleID(UID);
+      const Bank_id = generateBankID(UID);
+      const file = req.file;
 
       // Find the drug personality by UID
       const drugPersonality = await DrugPerson.findOne({
         where: {
-          Name: Name,
+          First_Name: First_Name,
+          Middle_Name:Middle_Name,
+          Last_Name:Last_Name,
           Birthdate: Birthdate,
         },
       });
@@ -87,7 +90,9 @@ router.post("/register/drug-personality", verifyToken, async (req, res) => {
         const DrugPersonnel = await DrugPerson.create({
           UID,
           district: adminChecker.district,
-          Name,
+          First_Name,
+          Middle_Name,
+          Last_Name,
           Birthdate,
           Address,
           Barangay,
@@ -98,6 +103,7 @@ router.post("/register/drug-personality", verifyToken, async (req, res) => {
           Nationality,
           Classification,
           Classification_Rating,
+          Picture: file.path,
           Affiliation_id,
           Vehicle_id,
           Bank_id,
@@ -134,7 +140,7 @@ router.post("/update/drug-personality", verifyToken, async (req, res) => {
       adminChecker.user_type === "superadmin" ||
       adminChecker.user_type === "admin"
     ) {
-      const { Name, Birthdate, Address, Barangay, City, Region, Gender, Civil_Status, Nationality, Classification, Classification_Rating } = req.body;
+      const { First_Name, Middle_Name, Last_Name, Birthdate, Address, Barangay, City, Region, Gender, Civil_Status, Nationality, Classification, Classification_Rating } = req.body;
 
       // Check if the UID is provided in the request body
       if (!UID) {
@@ -154,13 +160,15 @@ router.post("/update/drug-personality", verifyToken, async (req, res) => {
       }
 
       // Update fields only if they are provided in the request body
-      if (Name) drugPersonality.Name = Name;
+      if (First_Name) drugPersonality.First_Name = First_Name;
+      if (Middle_Name) drugPersonality.Middle_Name = Middle_Name;
+      if (Last_Name) drugPersonality.Last_Name = Last_Name;
       if (Birthdate) drugPersonality.Birthdate = Birthdate;
       if (Address) drugPersonality.Address = Address;
       if (Barangay) drugPersonality.Barangay = Barangay;
       if (City) drugPersonality.City = City;
-      if (Address) drugPersonality.Address = Address;
       if (Region) drugPersonality.Region = Region;
+      if (Gender) drugPersonality.Gender = Gender;
       if (Civil_Status) drugPersonality.Civil_Status = Civil_Status;
       if (Nationality) drugPersonality.Nationality = Nationality;
       if (Classification) drugPersonality.Classification = Classification;
