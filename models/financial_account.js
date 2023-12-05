@@ -16,7 +16,11 @@ const financial_account = sequelize.define('financial_account', {
     type: DataTypes.STRING,
     allowNull: true,
   },
-  financial_accounts: {
+  bank_type: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  name:{
     type: DataTypes.STRING,
     allowNull: true,
   },
