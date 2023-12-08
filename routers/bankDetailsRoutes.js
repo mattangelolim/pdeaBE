@@ -12,7 +12,7 @@ router.post("/add/bank-record", verifyToken, async (req, res) => {
       adminChecker.user_type === "admin"
     ) {
       const UID = req.query.UID;
-      const { bank_number, bank_type, name } = req.body;
+      const bankRecords = req.body; // Expecting an array of bank records
 
       const findDrugPersonality = await DrugPerson.findOne({
         where: {
@@ -27,23 +27,31 @@ router.post("/add/bank-record", verifyToken, async (req, res) => {
       }
 
       const Bank_id = findDrugPersonality.Bank_id;
-      const bankDetails = await Finance.create({
-        Bank_id: Bank_id,
-        bank_number,
-        bank_type,
-        name,
-        UID: UID,
-      });
+
+      // Process each bank record in the array
+      const bankDetailsArray = [];
+      for (const bankRecord of bankRecords) {
+        const { bank_number, bank_type, name } = bankRecord;
+        const bankDetails = await Finance.create({
+          Bank_id: Bank_id,
+          bank_number,
+          bank_type,
+          name,
+          UID: UID,
+        });
+        bankDetailsArray.push(bankDetails);
+      }
 
       res
         .status(200)
-        .json({ message: "Bank details added successfully", bankDetails });
+        .json({ message: "Bank details added successfully", bankDetails: bankDetailsArray });
     }
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: error.message });
   }
 });
+
 
 router.get("/fetch/bank-record", async (req, res) => {
   try {
