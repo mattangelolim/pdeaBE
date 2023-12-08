@@ -68,7 +68,7 @@ router.get("/fetch/bank-record", async (req, res) => {
   }
 });
 
-router.post("/delete/bank-record/", verifyToken, async (req, res) => {
+router.post("/delete/bank-record", verifyToken, async (req, res) => {
   try {
     const id = req.query.id;
 

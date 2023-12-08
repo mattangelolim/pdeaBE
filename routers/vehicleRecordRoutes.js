@@ -9,53 +9,59 @@ router.post("/add/vehicle-record", verifyToken, async (req, res) => {
         const adminChecker = req.user;
         if (adminChecker.user_type === "superadmin" || adminChecker.user_type === "admin") {
 
-            const UID = req.query.UID
-            const { plate_number, registered_address, registered_name } = req.body;
+            const UID = req.query.UID;
+            const vehicleRecords = req.body; // Array of vehicle records
 
-            const findDrugPersonality = await DrugPerson.findOne({
-                where: {
-                    UID: UID
-                }
-            });
+            // Iterate through the array of vehicle records
+            const createdRecords = [];
+            for (const record of vehicleRecords) {
+                const { plate_number, registered_address, registered_name } = record;
 
-            if (!findDrugPersonality) {
-                return res.status(400).json({ message: "No Drug Personality has this UID" })
-            }
-
-            const Vehicle_id = findDrugPersonality.Vehicle_id
-
-            const existingVehicle = await Vehicle_Record.findOne({
-                where: {
-                    plate_number: plate_number
-                }
-            })
-
-            if (existingVehicle) {
-                return res.status(400).json({ message: "Car already registered" })
-            }
-
-            const createVehicleRecord = await Vehicle_Record.create({
-                Vehicle_id,
-                plate_number,
-                registered_address,
-                registered_name,
-                UID
-            })
-
-            res.status(201).json({ message: "Vehicle record saved", createVehicleRecord })
-        } else {
-            res
-                .status(403)
-                .json({
-                    error:
-                        "Permission denied. Only superadmins or admins can delete drug personalities.",
+                const findDrugPersonality = await DrugPerson.findOne({
+                    where: {
+                        UID: UID
+                    }
                 });
+
+                if (!findDrugPersonality) {
+                    return res.status(400).json({ message: "No Drug Personality has this UID" });
+                }
+
+                const Vehicle_id = findDrugPersonality.Vehicle_id;
+
+                const existingVehicle = await Vehicle_Record.findOne({
+                    where: {
+                        plate_number: plate_number
+                    }
+                });
+
+                if (existingVehicle) {
+                    return res.status(400).json({ message: `Car with plate number ${plate_number} is already registered` });
+                }
+
+                const createVehicleRecord = await Vehicle_Record.create({
+                    Vehicle_id,
+                    plate_number,
+                    registered_address,
+                    registered_name,
+                    UID
+                });
+
+                createdRecords.push(createVehicleRecord);
+            }
+
+            res.status(201).json({ message: "Vehicle records saved", createdRecords });
+        } else {
+            res.status(403).json({
+                error: "Permission denied. Only superadmins or admins can delete drug personalities."
+            });
         }
     } catch (error) {
-        console.error(error)
-        res.status(500).json({ message: error.message })
+        console.error(error);
+        res.status(500).json({ message: error.message });
     }
-})
+});
+
 
 router.get("/fetch/vehicle-record", async (req, res) => {
     try {
