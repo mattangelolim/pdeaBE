@@ -29,22 +29,29 @@ const Affiliation = sequelize.define('Affiliation', {
     type: DataTypes.STRING,
     allowNull: true,
   },
+  Address: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  Barangay: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  City: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  Region: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
   Picture: {
     type: DataTypes.STRING,
     allowNull: true,
   },
-  createdAt: {
-    type: DataTypes.DATE,
-    allowNull: false,
-    defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
-  },
-  updatedAt: {
-    type: DataTypes.DATE,
-    allowNull: false,
-    defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
-  },
+
 });
 
-// Affiliation.sync()
+Affiliation.sync()
 
 module.exports = Affiliation;

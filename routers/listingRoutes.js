@@ -7,70 +7,27 @@ const DrugPerson = require("../models/drug_personality");
 router.get("/personality/list", verifyToken, async (req, res) => {
   try {
     // Assuming adminChecker is a district in the req.user object
-    const adminDistrict = req.user.district;
+    const classification = req.query.classification;
 
     // Fetch drug personalities where district is equal to adminChecker
     const drugPersonalities = await DrugPerson.findAll({
-      where: { district: adminDistrict },
-      order: [['Classification_Rating', 'DESC']],
+      where: { classification: classification },
+      order: [["Classification_Rating", "DESC"]],
     });
 
     // Calculate age for each object based on birthdate
-    const drugPersonalitiesWithAge = drugPersonalities.map(person => {
+    const drugPersonalitiesWithAge = drugPersonalities.map((person) => {
       const birthdate = new Date(person.Birthdate);
-      console.log(birthdate)
+      console.log(birthdate);
       const now = new Date();
-      console.log(now)
+      console.log(now);
       let age = now.getYear() - birthdate.getYear();
       // age = Math.floor(age);
 
       if (
         now.getMonth() < birthdate.getMonth() ||
-        (now.getMonth() === birthdate.getMonth() && now.getDate() < birthdate.getDate())
-      ) {
-        age = age - 1;
-      }
-
-      // Manually copy properties and add age to create a new object
-      const newPerson = {
-        ...person.toJSON(),
-        age,
-      };
-
-      return newPerson;
-    });
-
-    // Send the list with age as a response
-    res.json(drugPersonalitiesWithAge);
-
-    // emitPersonalityListUpdate(drugPersonalitiesWithAge);
-  } catch (error) {
-    console.error(error);
-    res.status(500).send("Internal Server Error");
-  }
-});
-
-router.get("/personality/list/try", async (req, res) => {
-  try {
-
-    // Fetch drug personalities where district is equal to adminChecker
-    const drugPersonalities = await DrugPerson.findAll({
-      where:{
-        district: "district 1"
-      }
-    });
-    // console.log(drugPersonalities)
-
-    // Calculate age for each object based on birthdate
-    const drugPersonalitiesWithAge = drugPersonalities.map(person => {
-      const birthdate = new Date(person.Birthdate);
-      const now = new Date();
-      let age = now.getYear() - birthdate.getYear();
-      // age = Math.floor(age);
-
-      if (
-        now.getMonth() < birthdate.getMonth() ||
-        (now.getMonth() === birthdate.getMonth() && now.getDate() < birthdate.getDate())
+        (now.getMonth() === birthdate.getMonth() &&
+          now.getDate() < birthdate.getDate())
       ) {
         age = age - 1;
       }
