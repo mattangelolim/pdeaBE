@@ -50,7 +50,6 @@ router.post("/upload/gallery", upload.single("file"), verifyToken, async (req, r
         res.status(500).json({ message: error.message })
     }
 
-
 })
 
 module.exports = router
