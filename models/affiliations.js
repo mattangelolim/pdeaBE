@@ -52,6 +52,6 @@ const Affiliation = sequelize.define('Affiliation', {
 
 });
 
-Affiliation.sync()
+// Affiliation.sync()
 
 module.exports = Affiliation;

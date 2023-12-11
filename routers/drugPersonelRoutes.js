@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const verifyToken = require("../middleware/tokenMiddleware");
 const DrugPerson = require("../models/drug_personality");
+const AddressModel = require("../models/Other_Address")
 const multer = require("multer");
 const {
   generateAffiliationID,
@@ -24,28 +25,34 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 // Endpoint to upload a picture
-router.post("/upload-picture", upload.single("file"), async (req, res) => {
+router.post("/secondary/address", async (req, res) => {
   try {
-    const uid = req.query.uid;
+    const UID = req.query.UID;
+    const diffAdd = req.body;
 
     // Check if the user with the given UID exists
-    const user = await DrugPerson.findOne({ where: { UID: uid } });
+    const user = await DrugPerson.findOne({ where: { UID: UID } });
 
     if (!user) {
       return res.status(404).json({ error: "User not found." });
     }
+    const secondaryAddressArr = []
+    for (const address of diffAdd) {
+      const { Address, Barangay, City, Region } = address
 
-    if (!req.file) {
-      return res.status(400).json({ error: "No picture file uploaded." });
+      const secondaryAddress = await AddressModel.create({
+        UID: UID,
+        Address,
+        Barangay,
+        City,
+        Region
+      })
+
+      secondaryAddressArr.push(secondaryAddress)
     }
 
-    // Update the user's profile with the uploaded picture path
-    user.file = req.file.path;
-    await user.save();
-
     res.status(200).json({
-      message: "Picture uploaded successfully.",
-      imagePath: user.Picture,
+      secondaryAddressArr
     });
   } catch (error) {
     console.error(error);
