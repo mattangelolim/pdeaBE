@@ -36,29 +36,28 @@ router.post("/secondary/address", async (req, res) => {
     if (!user) {
       return res.status(404).json({ error: "User not found." });
     }
-    const secondaryAddressArr = []
-    for (const address of diffAdd) {
-      const { Address, Barangay, City, Region } = address
 
-      const secondaryAddress = await AddressModel.create({
-        UID: UID,
-        Address,
-        Barangay,
-        City,
-        Region
-      })
+    // Assume diffAdd is a single address object
+    const { Address, Barangay, City, Region } = diffAdd;
 
-      secondaryAddressArr.push(secondaryAddress)
-    }
+    // Create a single secondary address
+    const secondaryAddress = await AddressModel.create({
+      UID: UID,
+      Address,
+      Barangay,
+      City,
+      Region,
+    });
 
     res.status(200).json({
-      secondaryAddressArr
+      secondaryAddress,
     });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: error.message });
   }
 });
+
 
 router.post(
   "/register/drug-personality",

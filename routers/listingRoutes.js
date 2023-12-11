@@ -20,7 +20,7 @@ router.get("/personality/list", verifyToken, async (req, res) => {
       const birthdate = new Date(person.Birthdate);
       console.log(birthdate);
       const now = new Date();
-      console.log(now);
+      console.log(now); 
       let age = now.getYear() - birthdate.getYear();
       // age = Math.floor(age);
 
