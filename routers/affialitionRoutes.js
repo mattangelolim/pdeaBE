@@ -162,6 +162,10 @@ router.get("/fetch/affiliations", async (req, res) => {
         Name: affiliation.Name,
         Gender: affiliation.Gender,
         Relationship: affiliation.Relationship,
+        Address: affiliation.Address,
+        Barangay: affiliation.Barangay,
+        City: affiliation.City,
+        Region: affiliation.Region,
         Picture: affiliation.Picture,
       };
     });
