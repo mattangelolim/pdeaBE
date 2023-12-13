@@ -9,11 +9,18 @@ router.get("/personality/list", verifyToken, async (req, res) => {
     // Assuming adminChecker is a district in the req.user object
     const classification = req.query.classification;
 
-    // Fetch drug personalities where district is equal to adminChecker
-    const drugPersonalities = await DrugPerson.findAll({
-      where: { classification: classification },
-      order: [["Classification_Rating", "DESC"]],
-    });
+    let drugPersonalities;
+
+    if (classification === "All") {
+      drugPersonalities = await DrugPerson.findAll({
+        order: [["Classification_Rating", "DESC"]],
+      });
+    } else {
+      drugPersonalities = await DrugPerson.findAll({
+        where: { classification: classification },
+        order: [["Classification_Rating", "DESC"]],
+      });
+    }
 
     // Calculate age for each object based on birthdate
     const drugPersonalitiesWithAge = drugPersonalities.map((person) => {
@@ -50,5 +57,6 @@ router.get("/personality/list", verifyToken, async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 });
+
 
 module.exports = router;
