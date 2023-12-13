@@ -150,7 +150,7 @@ router.get("/fetch/affiliations", async (req, res) => {
 
     if (!affiliations || affiliations.length === 0) {
       return res
-        .status(202)
+        .status(210)
         .json({ message: "No affiliations found for this UID" });
     }
 
@@ -169,7 +169,6 @@ router.get("/fetch/affiliations", async (req, res) => {
         Picture: affiliation.Picture,
       };
     });
-
     res.status(200).json({ affiliations: affiliationsWithPictures });
   } catch (error) {
     console.error(error);

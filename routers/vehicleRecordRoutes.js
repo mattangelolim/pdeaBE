@@ -74,7 +74,7 @@ router.get("/fetch/vehicle-record", async (req, res) => {
         })
         if (!vehicleRec || vehicleRec.length === 0) {
             return res
-                .status(404)
+                .status(210)
                 .json({ message: "No Vehicle Record found for this UID" });
         }
         const vehicleRecords = vehicleRec.map((vehicle) => {

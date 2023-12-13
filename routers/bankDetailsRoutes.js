@@ -22,7 +22,7 @@ router.post("/add/bank-record", verifyToken, async (req, res) => {
 
       if (!findDrugPersonality) {
         return res
-          .status(400)
+          .status(210)
           .json({ message: "No Drug Personality has this UID" });
       }
 
