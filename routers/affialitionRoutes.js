@@ -150,7 +150,7 @@ router.get("/fetch/affiliations", async (req, res) => {
 
     if (!affiliations || affiliations.length === 0) {
       return res
-        .status(201)
+        .status(202)
         .json({ message: "No affiliations found for this UID" });
     }
 
