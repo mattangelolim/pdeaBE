@@ -52,4 +52,22 @@ router.post("/upload/gallery", upload.single("file"), verifyToken, async (req, r
 
 })
 
+router.get("/person/gallery", async (req, res) => {
+    try {
+      const UID = req.query.UID;
+  
+      // Assuming 'Gallery' is your model and you want to find galleries by UID
+      const galleries = await Gallery.findAll({ UID });
+  
+      if (!galleries || galleries.length === 0) {
+        return res.status(404).json({ message: "Galleries not found for this UID" });
+      }
+  
+      res.status(200).json({ galleries });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: error.message });
+    }
+  });
+
 module.exports = router
