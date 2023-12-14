@@ -60,7 +60,8 @@ router.get("/person/gallery", async (req, res) => {
       const galleries = await Gallery.findAll({ 
         where:{
             UID:UID
-        }
+        },
+        order: [["id", "DESC"]],
        });
   
       if (!galleries || galleries.length === 0) {
