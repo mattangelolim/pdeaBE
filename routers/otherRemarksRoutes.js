@@ -57,10 +57,14 @@ router.get("/person/gallery", async (req, res) => {
       const UID = req.query.UID;
   
       // Assuming 'Gallery' is your model and you want to find galleries by UID
-      const galleries = await Gallery.findAll({ UID });
+      const galleries = await Gallery.findAll({ 
+        where:{
+            UID:UID
+        }
+       });
   
       if (!galleries || galleries.length === 0) {
-        return res.status(404).json({ message: "Galleries not found for this UID" });
+        return res.status(210).json({ message: "Galleries not found for this UID" });
       }
   
       res.status(200).json({ galleries });
