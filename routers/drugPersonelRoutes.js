@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const verifyToken = require("../middleware/tokenMiddleware");
 const DrugPerson = require("../models/drug_personality");
-const AddressModel = require("../models/Other_Address")
+const AddressModel = require("../models/Other_Address");
 const multer = require("multer");
 const {
   generateAffiliationID,
@@ -10,6 +10,7 @@ const {
   generateBankID,
   generateRandomString,
 } = require("../utils/generatedIDS");
+const Progressive = require("../models/Progressive_Report");
 
 // Set up multer storage to store files in a folder
 const storage = multer.diskStorage({
@@ -58,7 +59,6 @@ router.post("/secondary/address", async (req, res) => {
   }
 });
 
-
 router.post(
   "/register/drug-personality",
   upload.single("file"),
@@ -86,15 +86,19 @@ router.post(
           Gender,
           Civil_Status,
           Nationality,
-          Classification,
-          Classification_Rating,
+          Classification
         } = req.body;
 
         // FUNCTIONS TO GENERATE DIFFERENT IDS
         const Affiliation_id = generateAffiliationID(UID);
         const Vehicle_id = generateVehicleID(UID);
         const Bank_id = generateBankID(UID);
-        const file = req.file;
+
+        let picturePath = null;
+
+        if (req.file) {
+          picturePath = req.file.path;
+        }
 
         // Find the drug personality by UID
         const drugPersonality = await DrugPerson.findOne({
@@ -123,18 +127,23 @@ router.post(
             Civil_Status,
             Nationality,
             Classification,
-            Classification_Rating,
-            Picture: file.path,
+            Picture: picturePath,
             Affiliation_id,
             Vehicle_id,
             Bank_id,
           });
+
+          const addProgressive = await Progressive.create({
+            UID,
+            progress: 0,
+          });
+
           res.status(201).json({
             message: "Drug personality created successfully.",
             DrugPersonnel,
           });
         } else {
-          res.status(400).json({ message: "Drug Personality already exist" });
+          res.status(400).json({ message: "Drug Personality already exists" });
         }
       } else {
         res.status(403).json({
@@ -163,9 +172,7 @@ router.get("/personal/information", async (req, res) => {
       return res.status(404).json({ message: "No personal details found" });
     }
 
-    res
-      .status(200)
-      .json({ personalInfo });
+    res.status(200).json({ personalInfo });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: error.message });

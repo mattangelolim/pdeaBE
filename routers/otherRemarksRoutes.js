@@ -6,6 +6,8 @@ const { generateRandomString } = require("../utils/generatedIDS");
 const Gallery = require("../models/Gallery");
 const Document = require("../models/Document");
 const DrugPerson = require("../models/drug_personality");
+const ProgressExist = require("../models/Progress_Update");
+const ProgressReport = require("../models/Progressive_Report");
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -38,6 +40,10 @@ router.post(
   async (req, res) => {
     try {
       const adminChecker = req.user;
+      const UID = req.query.UID;
+      const description = req.body.description;
+      const file = req.file;
+      const field = "Others"
 
       const findPerson = await DrugPerson.findOne({
         where: {
@@ -55,9 +61,6 @@ router.post(
         adminChecker.user_type === "superadmin" ||
         adminChecker.user_type === "admin"
       ) {
-        const UID = req.query.UID;
-        const description = req.body.description;
-        const file = req.file;
 
         const uploadEvidence = await Gallery.create({
           UID,
@@ -65,6 +68,43 @@ router.post(
           description,
         });
 
+        // Check if it's the first time and update progress
+      const existingProgress = await ProgressExist.findOne({
+        where: {
+          UID: UID,
+          field: field,
+        },
+      });
+
+      if (!existingProgress) {
+        // If it doesn't exist, add 15 for the current progress
+        const addProgress = await ProgressExist.create({
+          UID,
+          field,
+        });
+
+        const incrementProgressive = await ProgressReport.findOne({
+          where: {
+            UID,
+          },
+        });
+
+        if (incrementProgressive) {
+          // If the record is found, increment the progress by 15
+          const currentProgress = incrementProgressive.progress;
+          const latestProgress = currentProgress + 15;
+
+          // Update the progress in the ProgressReport table
+          await ProgressReport.update(
+            { progress: latestProgress },
+            {
+              where: {
+                UID,
+              },
+            }
+          );
+        }
+      }
         res.status(201).json({ uploadEvidence });
       } else {
         res.status(403).json({
@@ -105,52 +145,93 @@ router.get("/person/gallery", async (req, res) => {
 });
 
 router.post(
-    "/upload/document",
-    uploadDocuments.single("pdf"), verifyToken,
-    async (req, res) => {
-      try {
-        const UID = req.query.UID;
-        const { documentType } = req.body;
-  
-        const findPerson = await DrugPerson.findOne({
+  "/upload/document",
+  uploadDocuments.single("pdf"),
+  verifyToken,
+  async (req, res) => {
+    try {
+      const UID = req.query.UID;
+      const { documentType } = req.body;
+
+      const field = documentType;
+
+      const findPerson = await DrugPerson.findOne({
+        where: {
+          UID: UID,
+        },
+      });
+
+      if (!findPerson) {
+        return res
+          .status(400)
+          .json({ message: "No person found with this UID." });
+      }
+
+      // Check if UID and documentType are provided
+      if (!UID || !documentType) {
+        return res
+          .status(400)
+          .json({ error: "UID and documentType are required." });
+      }
+
+      const file = req.file;
+
+      // Ensure the file is successfully uploaded and stored
+      if (!file || !file.path) {
+        return res.status(400).json({ error: "File upload failed." });
+      }
+
+      // Create a new document instance
+      const newDocument = await Document.create({
+        UID: UID,
+        documentType: documentType,
+        pdfPath: file.path,
+      });
+
+      // Check if it's the first time and update progress
+      const existingProgress = await ProgressExist.findOne({
+        where: {
+          UID: UID,
+          field: field,
+        },
+      });
+
+      if (!existingProgress) {
+        // If it doesn't exist, add 15 for the current progress
+        const addProgress = await ProgressExist.create({
+          UID,
+          field,
+        });
+
+        const incrementProgressive = await ProgressReport.findOne({
           where: {
-            UID: UID,
+            UID,
           },
         });
-  
-        if (!findPerson) {
-          return res
-            .status(400)
-            .json({ message: "No person found with this UID." });
+
+        if (incrementProgressive) {
+          // If the record is found, increment the progress by 15
+          const currentProgress = incrementProgressive.progress;
+          const latestProgress = currentProgress + 15;
+
+          // Update the progress in the ProgressReport table
+          await ProgressReport.update(
+            { progress: latestProgress },
+            {
+              where: {
+                UID,
+              },
+            }
+          );
         }
-  
-        // Check if UID and documentType are provided
-        if (!UID || !documentType) {
-          return res
-            .status(400)
-            .json({ error: "UID and documentType are required." });
-        }
-  
-        const file = req.file;
-  
-        // Ensure the file is successfully uploaded and stored
-        if (!file || !file.path) {
-          return res.status(400).json({ error: "File upload failed." });
-        }
-  
-        // Create a new document instance
-        const newDocument = await Document.create({
-          UID: UID,
-          documentType: documentType,
-          pdfPath: file.path,
-        });
-  
-        res.status(201).json({ message: "Document uploaded successfully." });
-      } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: "Internal Server Error" });
       }
+
+      res.status(201).json({ message: "Document uploaded successfully." });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Internal Server Error" });
     }
-  );
+  }
+);
 
 module.exports = router;

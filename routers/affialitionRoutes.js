@@ -4,6 +4,8 @@ const verifyToken = require("../middleware/tokenMiddleware");
 const multer = require("multer");
 const DrugPerson = require("../models/drug_personality");
 const Affiliation = require("../models/affiliations");
+const ProgressExist = require("../models/Progress_Update");
+const ProgressReport = require("../models/Progressive_Report")
 const { generateRandomString } = require("../utils/generatedIDS");
 
 const storage = multer.diskStorage({
@@ -30,6 +32,7 @@ router.post(
         adminChecker.user_type === "admin"
       ) {
         const UID = req.query.UID;
+        const field = "Affiliation";
         const { Name, Gender, Relationship, Address, Barangay, City, Region } =
           req.body;
 
@@ -43,11 +46,15 @@ router.post(
             .status(400)
             .json({ message: "No drug personality found with this UID" });
         }
-        // const affiliationId = ;
+
         console.log("Affiliation ID:", findDrugPersonality.Affiliation_id);
         const affiliationId = findDrugPersonality.Affiliation_id;
 
-        const file = req.file;
+        let picturePath = null;
+
+        if (req.file) {
+          picturePath = req.file.path;
+        }
 
         const createAffiliation = await Affiliation.create({
           UID,
@@ -59,24 +66,57 @@ router.post(
           Barangay,
           City,
           Region,
-          Picture: file.path,
+          Picture:picturePath,
         });
 
+        // Check if it's the first time and update progress
+        const existingProgress = await ProgressExist.findOne({
+          where: {
+            UID: UID,
+            field: field,
+          },
+        });
+
+        if (!existingProgress) {
+          // If it doesn't exist, add 15 for the current progress
+          const addProgress = await ProgressExist.create({
+            UID,
+            field,
+          });
+
+          const incrementProgressive = await ProgressReport.findOne({
+            where: {
+              UID,
+            },
+          });
+
+          if (incrementProgressive) {
+            // If the record is found, increment the progress by 15
+            const currentProgress = incrementProgressive.progress;
+            const latestProgress = currentProgress + 15;
+
+            // Update the progress in the ProgressReport table
+            await ProgressReport.update(
+              { progress: latestProgress },
+              {
+                where: {
+                  UID,
+                },
+              }
+            );
+          }
+        }
         res.status(201).json({
           createAffiliation,
         });
-      } else {
-        res.status(403).json({
-          error:
-            "Permission denied. Only superadmins or admins can add drug personalities.",
-        });
       }
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: error.message });
+      console.error("Error:", error);
+      res.status(500).json({ message: "Internal Server Error" });
     }
   }
 );
+
 
 router.post(
   "/update/affiliation",

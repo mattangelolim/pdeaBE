@@ -2,11 +2,14 @@ const express = require("express");
 const router = express.Router();
 const Finance = require("../models/financial_account");
 const DrugPerson = require("../models/drug_personality");
+const ProgressExist = require("../models/Progress_Update");
+const ProgressReport = require("../models/Progressive_Report")
 const verifyToken = require("../middleware/tokenMiddleware");
 
 router.post("/add/bank-record", verifyToken, async (req, res) => {
   try {
     const adminChecker = req.user;
+    const field = "Bank Record";
     if (
       adminChecker.user_type === "superadmin" ||
       adminChecker.user_type === "admin"
@@ -40,6 +43,44 @@ router.post("/add/bank-record", verifyToken, async (req, res) => {
           UID: UID,
         });
         bankDetailsArray.push(bankDetails);
+      }
+
+       // Check if it's the first time and update progress
+       const existingProgress = await ProgressExist.findOne({
+        where: {
+          UID: UID,
+          field: field,
+        },
+      });
+
+      if (!existingProgress) {
+        // If it doesn't exist, add 15 for the current progress
+        const addProgress = await ProgressExist.create({
+          UID,
+          field,
+        });
+
+        const incrementProgressive = await ProgressReport.findOne({
+          where: {
+            UID,
+          },
+        });
+
+        if (incrementProgressive) {
+          // If the record is found, increment the progress by 15
+          const currentProgress = incrementProgressive.progress;
+          const latestProgress = currentProgress + 10;
+
+          // Update the progress in the ProgressReport table
+          await ProgressReport.update(
+            { progress: latestProgress },
+            {
+              where: {
+                UID,
+              },
+            }
+          );
+        }
       }
 
       res
