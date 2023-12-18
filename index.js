@@ -33,6 +33,7 @@ const vehicleRecordRoutes = require("./routers/vehicleRecordRoutes");
 const illegalDrugsRoutes = require("./routers/illegalDrugsRoutes");
 const bankDetailsRoutes = require("./routers/bankDetailsRoutes");
 const otherRemarksRoutes = require("./routers/otherRemarksRoutes");
+const progressRoutes = require("./routers/progressRoutes")
 
 // Middleware
 app.use(bodyParser.json());
@@ -49,6 +50,7 @@ app.use("/api", vehicleRecordRoutes);
 app.use("/api", illegalDrugsRoutes);
 app.use("/api", bankDetailsRoutes);
 app.use("/api", otherRemarksRoutes)
+app.use("/api", progressRoutes)
 
 // Routes
 app.get("/", (req, res) => {
