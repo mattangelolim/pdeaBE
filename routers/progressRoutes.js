@@ -14,7 +14,7 @@ router.get("/progress/report", async (req, res) => {
         // Fetch DrugPerson data using UIDs from ProgressReport
         const drugPersonData = await DrugPerson.findAll({
             where: { UID: progressUIDs }, // Match UIDs from ProgressReport
-            attributes: ['UID', 'First_Name', 'Middle_Name', 'Last_Name', 'Classification', 'City']
+            attributes: ['UID', 'First_Name', 'Middle_Name', 'Last_Name', 'Classification', 'City', 'Classification_Rating']
         });
 
         // Creating a map of UID to drugPersonData for easier access
@@ -44,7 +44,8 @@ router.get("/progress/report", async (req, res) => {
             return {
                 ...report.get({ plain: true }), // Get plain object from Sequelize model
                 full_name: fullName,
-                classification: drugPerson ? drugPerson.Classification : null, // Access classification from drugPerson
+                classification: drugPerson ? drugPerson.Classification : null,
+                status: drugPerson.Classification_Rating !== 0 ? getRatingWord(drugPerson.Classification_Rating) : 'Not Set',
                 city: drugPerson ? drugPerson.City : null,
                 createdAt: formattedCreatedAt,
                 updatedAt: formattedUpdatedAt,
@@ -120,3 +121,20 @@ router.post("/declare/rating", verifyToken, async (req, res) => {
 })
 
 module.exports = router;
+
+function getRatingWord(rating) {
+    switch (rating) {
+      case 1:
+        return 'Low Target';
+      case 2:
+        return 'Medium Target';
+      case 3:
+        return 'High Target';
+      case 4:
+        return 'Very High Target';
+      case 5:
+        return 'Extremely High Target';
+      default:
+        return '';
+    }
+  }
