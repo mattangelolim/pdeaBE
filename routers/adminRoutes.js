@@ -60,26 +60,26 @@ router.post("/login/admin", async (req, res) => {
 
         // Validate input
         if (!username || !password) {
-            return res.status(400).json({ error: "Missing username or password." });
+            return res.status(200).json({ error: "Missing username or password." });
         }
 
         // Find the admin user in the database
         const admin = await Admin.findOne({ 
-            where:{
+            where:{     
                 username:username
             }
          });
 
         // Check if the admin exists
         if (!admin) {
-            return res.status(401).json({ error: "Invalid credentials." });
+            return res.status(200).json({ error: "Invalid credentials. wrong username" });
         }
 
         // Compare the provided password with the hashed password in the database
         const passwordMatch = await bcrypt.compare(password, admin.password);
 
         if (!passwordMatch) {
-            return res.status(401).json({ error: "Invalid credentials." });
+            return res.status(200).json({ error: "Invalid credentials. wrong password" });
         }
 
         // Create and sign a JWT token

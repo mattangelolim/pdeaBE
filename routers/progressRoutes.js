@@ -111,6 +111,11 @@ router.post("/declare/rating", verifyToken, async (req, res) => {
             }
         );
 
+        const declaration = await ProgressUpdate.create({
+            UID,
+            field: "Target Value",
+        })
+
         res.status(200).json({ message: "Classification Rating updated successfully", updatedUser });
 
 
@@ -124,17 +129,17 @@ module.exports = router;
 
 function getRatingWord(rating) {
     switch (rating) {
-      case 1:
-        return 'Low Target';
-      case 2:
-        return 'Medium Target';
-      case 3:
-        return 'High Target';
-      case 4:
-        return 'Very High Target';
-      case 5:
-        return 'Extremely High Target';
-      default:
-        return '';
+        case 1:
+            return 'Low Target';
+        case 2:
+            return 'Medium Target';
+        case 3:
+            return 'High Target';
+        case 4:
+            return 'Very High Target';
+        case 5:
+            return 'Extremely High Target';
+        default:
+            return '';
     }
-  }
+}
