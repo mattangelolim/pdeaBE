@@ -181,4 +181,17 @@ router.post("/delete/vehicle-record", verifyToken, async (req, res) => {
   }
 });
 
+router.get("/fetch/vehicle-record/count", async (req, res) => {
+  try {
+    const vehicleCount = await Vehicle_Record.count();
+
+    res
+      .status(200)
+      .json({ message: "Vehicle record count fetched successfully", count: vehicleCount });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
 module.exports = router;

@@ -138,4 +138,17 @@ router.post("/delete/bank-record", verifyToken, async (req, res) => {
   }
 });
 
+router.get("/fetch/bank-record/count", async (req, res) => {
+  try {
+    const bankRecordCount = await Finance.count();
+
+    res
+      .status(200)
+      .json({ message: "Bank record count fetched successfully", count: bankRecordCount });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
 module.exports = router;

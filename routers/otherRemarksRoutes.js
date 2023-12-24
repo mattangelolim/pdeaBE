@@ -234,4 +234,56 @@ router.post(
   }
 );
 
+router.get("/get/documents", async (req, res) => {
+  try {
+    const UID = req.query.UID;
+    const documentType = req.query.documentType;
+
+    // Check if UID and documentType are provided
+    if (!UID || !documentType) {
+      return res
+        .status(400)
+        .json({ success: false, error: "UID and documentType are required." });
+    }
+
+    // Check if the user with the given UID exists
+    const user = await DrugPerson.findOne({
+      where: {
+        UID: UID,
+      },
+    });
+
+    if (!user) {
+      return res.status(404).json({ success: false, error: "User not found." });
+    }
+
+    // Fetch documents based on UID and document type
+    const documents = await Document.findAll({
+      where: {
+        UID: UID,
+        documentType: documentType,
+      },
+    });
+
+    res.status(200).json({ success: true, data: documents });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, error: "Internal Server Error" });
+  }
+});
+
+router.get("/fetch/gallery/count", async (req, res) => {
+  try {
+    const distinctGalleryCount = await Gallery.count({
+      col: 'UID',
+      distinct: true,
+    });
+
+    res.status(200).json({ message: "Distinct Gallery count fetched successfully", count: distinctGalleryCount });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
 module.exports = router;
