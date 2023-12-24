@@ -59,6 +59,38 @@ router.post("/secondary/address", async (req, res) => {
   }
 });
 
+router.get("/get/secondary/address", async (req, res) => {
+  try {
+    const UID = req.query.UID;
+
+    // Check if UID is provided
+    if (!UID) {
+      return res
+        .status(400)
+        .json({ success: false, error: "UID is required in the query parameters" });
+    }
+
+    // Check if the user with the given UID exists
+    const user = await DrugPerson.findOne({ where: { UID: UID } });
+
+    if (!user) {
+      return res.status(404).json({ success: false, error: "User not found." });
+    }
+
+    // Fetch secondary addresses based on UID
+    const secondaryAddresses = await AddressModel.findAll({
+      where: {
+        UID: UID,
+      },
+    });
+
+    res.status(200).json({ success: true, data: secondaryAddresses });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 router.post(
   "/register/drug-personality",
   upload.single("file"),

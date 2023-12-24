@@ -77,4 +77,30 @@ router.post("/add/illegal-drugs", verifyToken, async (req, res) => {
   }
 });
 
+router.get("/get/illegal-drugs", async (req, res) => {
+  try {
+    const UID = req.query.UID;
+
+    // Check if UID is provided
+    if (!UID) {
+      return res
+        .status(400)
+        .json({ success: false, error: "UID is required in the query parameters" });
+    }
+
+    // Fetch drug information based on UID
+    const drugRecords = await Illegal_Drugs.findAll({
+      where: {
+        UID: UID,
+      },
+    });
+    const drugNames = drugRecords.map(record => record.drug_name);
+
+    res.status(200).json({ success: true, data: drugNames });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+
 module.exports = router;
