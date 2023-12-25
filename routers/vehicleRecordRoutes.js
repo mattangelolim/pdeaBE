@@ -183,7 +183,10 @@ router.post("/delete/vehicle-record", verifyToken, async (req, res) => {
 
 router.get("/fetch/vehicle-record/count", async (req, res) => {
   try {
-    const vehicleCount = await Vehicle_Record.count();
+    const vehicleCount = await Vehicle_Record.count({
+      col: 'UID',
+      distinct: true,
+    });
 
     res
       .status(200)

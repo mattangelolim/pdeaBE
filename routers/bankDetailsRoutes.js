@@ -140,7 +140,10 @@ router.post("/delete/bank-record", verifyToken, async (req, res) => {
 
 router.get("/fetch/bank-record/count", async (req, res) => {
   try {
-    const bankRecordCount = await Finance.count();
+    const bankRecordCount = await Finance.count({
+      col: 'UID',
+      distinct: true,
+    });
 
     res
       .status(200)
