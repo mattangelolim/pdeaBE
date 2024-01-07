@@ -35,6 +35,7 @@ const bankDetailsRoutes = require("./routers/bankDetailsRoutes");
 const otherRemarksRoutes = require("./routers/otherRemarksRoutes");
 const progressRoutes = require("./routers/progressRoutes");
 const dashboardRoutes = require("./routers/dashBoardRoutes");
+const familyRoutes = require("./routers/familyRoutes")
 
 // Middleware
 app.use(bodyParser.json());
@@ -50,9 +51,10 @@ app.use("/api", affiliationRoutes);
 app.use("/api", vehicleRecordRoutes);
 app.use("/api", illegalDrugsRoutes);
 app.use("/api", bankDetailsRoutes);
-app.use("/api", otherRemarksRoutes)
-app.use("/api", progressRoutes)
-app.use("/api", dashboardRoutes)
+app.use("/api", otherRemarksRoutes);
+app.use("/api", progressRoutes);
+app.use("/api", dashboardRoutes);
+app.use("/api", familyRoutes);
 
 // Routes
 app.get("/", (req, res) => {

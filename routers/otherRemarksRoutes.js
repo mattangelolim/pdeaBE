@@ -176,7 +176,6 @@ router.post(
 
       const file = req.file;
 
-      // Ensure the file is successfully uploaded and stored
       if (!file || !file.path) {
         return res.status(400).json({ error: "File upload failed." });
       }

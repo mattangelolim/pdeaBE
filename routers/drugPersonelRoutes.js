@@ -59,6 +59,57 @@ router.post("/secondary/address", async (req, res) => {
   }
 });
 
+router.post("/update/secondary/address", verifyToken, async (req, res) => {
+  try {
+    const UID = req.query.UID;
+    const newAddressDetails = req.body;
+
+    // Check if required parameters are provided
+    if (!UID || !newAddressDetails) {
+      return res.status(400).json({
+        success: false,
+        error: "UID and newAddressDetails are required",
+      });
+    }
+
+    // Check if the user with the given UID exists
+    const user = await DrugPerson.findOne({ where: { UID: UID } });
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found." });
+    }
+
+    // Find the secondary address to update
+    const secondaryAddressToUpdate = await AddressModel.findOne({
+      where: {
+        UID: UID,
+      },
+    });
+
+    // Check if the address record exists
+    if (!secondaryAddressToUpdate) {
+      return res
+        .status(404)
+        .json({ success: false, error: "Secondary address not found" });
+    }
+
+    // Update the address details
+    const { Address, Barangay, City, Region } = newAddressDetails;
+    secondaryAddressToUpdate.Address = Address;
+    secondaryAddressToUpdate.Barangay = Barangay;
+    secondaryAddressToUpdate.City = City;
+    secondaryAddressToUpdate.Region = Region;
+
+    // Save the updated record
+    await secondaryAddressToUpdate.save();
+
+    res.status(200).json({ success: true, data: secondaryAddressToUpdate });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 router.get("/get/secondary/address", async (req, res) => {
   try {
     const UID = req.query.UID;
@@ -118,7 +169,7 @@ router.post(
           Gender,
           Civil_Status,
           Nationality,
-          Classification
+          Classification,
         } = req.body;
 
         // FUNCTIONS TO GENERATE DIFFERENT IDS

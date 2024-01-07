@@ -102,5 +102,46 @@ router.get("/get/illegal-drugs", async (req, res) => {
   }
 });
 
+router.post("/update/illegal-drugs", verifyToken, async (req, res) => {
+  try {
+    const UID = req.query.UID;
+    const currentDrugName = req.body.currentDrugName;
+    const newDrugName = req.body.newDrugName;
+
+    // Check if required parameters are provided
+    if (!UID || !currentDrugName || !newDrugName) {
+      return res.status(400).json({
+        success: false,
+        error: "UID, currentDrugName, and newDrugName are required",
+      });
+    }
+
+    // Find the record to update
+    const drugRecordToUpdate = await Illegal_Drugs.findOne({
+      where: {
+        UID: UID,
+        drug_name: currentDrugName,
+      },
+    });
+
+    // Check if the record exists
+    if (!drugRecordToUpdate) {
+      return res
+        .status(404)
+        .json({ success: false, error: "Drug record not found" });
+    }
+
+    // Update the drug_name
+    drugRecordToUpdate.drug_name = newDrugName;
+
+    // Save the updated record
+    await drugRecordToUpdate.save();
+
+    res.status(200).json({ success: true, data: drugRecordToUpdate });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 
 module.exports = router;
