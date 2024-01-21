@@ -24,18 +24,20 @@ router.post("/add/relative", async (req, res) => {
 router.get("/get/relative", async (req, res) => {
     try {
         const UID = req.query.UID;
-        const relationship = req.query.relationship;
+        // const relationship = req.query.relationship;
 
         const relative = await RelativeModel.findAll({
-            UID,
-            Relationship: relationship,
+            where:{
+                UID: UID
+            }
+
         });
 
         if (!relative) {
-            return res.status(404).json({ message: "Relative not found" });
+            return res.status(200).json({ message: "Relative not found" });
         }
 
-        res.status(200).json({ relative });
+        res.status(200).json({ relative:relative });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: error.message });
