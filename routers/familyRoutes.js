@@ -30,7 +30,6 @@ router.get("/get/relative", async (req, res) => {
             where:{
                 UID: UID
             }
-
         });
 
         if (!relative) {
