@@ -8,14 +8,14 @@ const helmet = require("helmet");
 const morgan = require("morgan");
 const { initializeWebSocket } = require("./socket");
 
-const file = fs.readFileSync("./DD47ED7C84A839388A589948EA5A10C4.txt")
-// const key = fs.readFileSync("private.key");
-// const cert = fs.readFileSync("certificate.crt");
+// const file = fs.readFileSync("./DD47ED7C84A839388A589948EA5A10C4.txt")
+const key = fs.readFileSync("private.key");
+const cert = fs.readFileSync("certificate.crt");
 
-// const cred = {
-//   key,
-//   cert,
-// };
+const cred = {
+  key,
+  cert,
+};
 
 const app = express();
 
@@ -23,7 +23,7 @@ app.use("/uploads", express.static("./uploads"));
 
 const port = process.env.PORT || 3000;
 const httpServer = http.createServer(app);
-// const httpsServer = https.createServer(cred, app); // Create an HTTP server instance
+const httpsServer = https.createServer(cred, app); // Create an HTTP server instance
 
 const adminRoutes = require("./routers/adminRoutes");
 const drugPersonalitiesRoutes = require("./routers/drugPersonelRoutes");
@@ -61,12 +61,12 @@ app.get("/", (req, res) => {
   res.send("Hello, this is your Express server!");
 });
 
-app.get('/.well-known/pki-validation/DD47ED7C84A839388A589948EA5A10C4.txt', (req, res) => {
-  res.sendFile('/home/ubuntu/pdeaBE/DD47ED7C84A839388A589948EA5A10C4.txt')
-})
+// app.get('/.well-known/pki-validation/DD47ED7C84A839388A589948EA5A10C4.txt', (req, res) => {
+//   res.sendFile('/home/ubuntu/pdeaBE/DD47ED7C84A839388A589948EA5A10C4.txt')
+// })
 
 // Pass the server instance to initializeWebSocket function
-// initializeWebSocket(httpsServer);
+initializeWebSocket(httpsServer);
 
 // app.use((req, res, next) => {
 //   req.io = io;
@@ -78,6 +78,6 @@ httpServer.listen(port, () => {
   console.log(`HTTP server is running on http://localhost:${port}`);
 });
 
-// httpsServer.listen(process.env.HTTPSPORT, () => {
-//   console.log(`HTTPS server is running on ${process.env.HTTPSPORT}`);
-// });
+httpsServer.listen(process.env.HTTPSPORT, () => {
+  console.log(`HTTPS server is running on ${process.env.HTTPSPORT}`);
+});
