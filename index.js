@@ -8,7 +8,7 @@ const helmet = require("helmet");
 const morgan = require("morgan");
 const { initializeWebSocket } = require("./socket");
 
-// const file = fs.readFileSync("./DD47ED7C84A839388A589948EA5A10C4.txt")
+const file = fs.readFileSync("./94E98D3EF69DAE5001C465340CC37C61.txt")
 const key = fs.readFileSync("private.key");
 const cert = fs.readFileSync("certificate.crt");
 
@@ -61,9 +61,9 @@ app.get("/", (req, res) => {
   res.send("Hello, this is your Express server!");
 });
 
-// app.get('/.well-known/pki-validation/DD47ED7C84A839388A589948EA5A10C4.txt', (req, res) => {
-//   res.sendFile('/home/ubuntu/pdeaBE/DD47ED7C84A839388A589948EA5A10C4.txt')
-// })
+app.get('/.well-known/pki-validation/94E98D3EF69DAE5001C465340CC37C61.txt', (req, res) => {
+  res.sendFile('/home/ubuntu/pdeaBE/94E98D3EF69DAE5001C465340CC37C61.txt')
+})
 
 // Pass the server instance to initializeWebSocket function
 initializeWebSocket(httpsServer);
